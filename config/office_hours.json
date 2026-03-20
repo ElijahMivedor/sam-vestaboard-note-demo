@@ -1,0 +1,8 @@
+{
+  "title": "OFFICE HOURS",
+  "schedule": [
+    { "day": "MON", "time": "2-4PM", "room": "RM 101" },
+    { "day": "WED", "time": "1-3PM", "room": "RM 204" },
+    { "day": "FRI", "time": "10-12", "room": "RM 101" }
+  ]
+}

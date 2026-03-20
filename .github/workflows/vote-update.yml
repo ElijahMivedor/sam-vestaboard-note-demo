@@ -1,0 +1,31 @@
+name: Update Vestaboard After Vote
+
+on:
+  workflow_dispatch:
+    inputs:
+      force_screen:
+        description: "Screen to display (always this_or_that for votes)"
+        required: false
+        default: "this_or_that"
+
+permissions:
+  contents: write
+
+jobs:
+  vote-display:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install requests feedparser
+
+      - name: Display vote results
+        env:
+          VESTABOARD_TOKEN: ${{ secrets.VESTABOARD_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/rotate.py --force-screen this_or_that

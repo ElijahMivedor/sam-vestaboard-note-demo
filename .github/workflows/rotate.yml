@@ -1,0 +1,42 @@
+name: Rotate Vestaboard
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+    inputs:
+      force_screen:
+        description: "Force a specific screen (weather, office_hours, news, this_or_that, student_quote)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  rotate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install requests feedparser
+
+      - name: Run rotation script
+        env:
+          VESTABOARD_TOKEN: ${{ secrets.VESTABOARD_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENMETEO_LAT: ${{ vars.OPENMETEO_LAT }}
+          OPENMETEO_LON: ${{ vars.OPENMETEO_LON }}
+          OPENMETEO_TZ: ${{ vars.OPENMETEO_TZ }}
+          NEWS_RSS_URL: ${{ vars.NEWS_RSS_URL }}
+        run: |
+          if [ -n "${{ github.event.inputs.force_screen }}" ]; then
+            python scripts/rotate.py --force-screen "${{ github.event.inputs.force_screen }}"
+          else
+            python scripts/rotate.py
+          fi
